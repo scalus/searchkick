@@ -92,6 +92,13 @@ class AggsTest < Minitest::Test
     assert_equal ({2 => 2}), store_agg(where: {color: "blue"}, aggs: {store_id: {where: {in_stock: false}}}, smart_aggs: false)
   end
 
+  def test_sub_aggs
+    result = Product.search('Product', aggs: {store_id: {aggs: {min_longitude: {min: {field: :longitude}}}}}).aggs['store_id']
+    bucket_hash = Hash[result['buckets'].map { |v| [v['key'], v] }]
+    assert_equal 12.4167, bucket_hash[1]['min_longitude']['value']
+    assert_equal -122.4667, bucket_hash[2]['min_longitude']['value']
+  end
+
   protected
 
   def buckets_as_hash(agg)

@@ -458,6 +458,7 @@ module Searchkick
           aggs.each do |field, agg_options|
             size = agg_options[:limit] ? agg_options[:limit] : 1_000
             shared_agg_options = agg_options.slice(:order)
+            sub_aggs = agg_options[:aggs]
 
             if agg_options[:ranges]
               payload[:aggs][field] = {
@@ -481,6 +482,7 @@ module Searchkick
                 }.merge(shared_agg_options)
               }
             end
+            payload[:aggs][field][:aggs] = sub_aggs if sub_aggs
 
             where = {}
             where = (options[:where] || {}).reject { |k| k == field } unless options[:smart_aggs] == false
