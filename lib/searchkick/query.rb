@@ -380,7 +380,7 @@ module Searchkick
         # filters
         filters = where_filters(options[:where])
         if filters.any?
-          if options[:facets] || options[:aggs]
+          if options[:facets] || options[:aggs] && !options[:filtered_query]
             payload[:filter] = {
               and: filters
             }
